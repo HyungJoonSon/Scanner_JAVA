@@ -69,12 +69,12 @@ public class Scanner {
                         ch = nextChar();
                         if (ch == '=') { // divAssign
                             ch = nextChar();
-                            return Token.divAssignTok;
+                            return Token.mkDefaultToken(Token.divAssignTok, lineno, col);
                         }
 
                         // divide
                         if (ch != '*' && ch != '/')
-                            return Token.divideTok;
+                            return Token.mkDefaultToken(Token.divideTok, lineno, col);
 
                         // multi line comment
                         if (ch == '*') {
@@ -100,6 +100,7 @@ public class Scanner {
                         ch = nextChar();
                         return Token.mkCharLiteral("" + ch1, lineno, col);
 
+                    // 마지막 토큰은 행, 열의 정보가 필요 없음
                     case eofCh:
                         return Token.eofTok;
 
@@ -107,85 +108,89 @@ public class Scanner {
                         ch = nextChar();
                         if (ch == '=') { // addAssign
                             ch = nextChar();
-                            return Token.addAssignTok;
+                            return Token.mkDefaultToken(Token.addAssignTok, lineno, col);
                         } else if (ch == '+') { // increment
                             ch = nextChar();
-                            return Token.incrementTok;
+                            return Token.mkDefaultToken(Token.incrementTok, lineno, col);
                         }
-                        return Token.plusTok;
+                        return Token.mkDefaultToken(Token.plusTok, lineno, col);
 
                     case '-':
                         ch = nextChar();
                         if (ch == '=') { // subAssign
                             ch = nextChar();
-                            return Token.subAssignTok;
+                            return Token.mkDefaultToken(Token.subAssignTok, lineno, col);
                         } else if (ch == '-') { // decrement
                             ch = nextChar();
-                            return Token.decrementTok;
+                            return Token.mkDefaultToken(Token.decrementTok, lineno, col);
                         }
                         return Token.minusTok;
                     case '*':
                         ch = nextChar();
                         if (ch == '=') { // multAssign
                             ch = nextChar();
-                            return Token.multAssignTok;
+                            return Token.mkDefaultToken(Token.multAssignTok, lineno, col);
                         }
                         return Token.multiplyTok;
                     case '%':
                         ch = nextChar();
                         if (ch == '=') { // remAssign
                             ch = nextChar();
-                            return Token.remAssignTok;
+                            return Token.mkDefaultToken(Token.remAssignTok, lineno, col);
                         }
-                        return Token.reminderTok;
+                        return Token.mkDefaultToken(Token.reminderTok, lineno, col);
                     case '(':
                         ch = nextChar();
-                        return Token.leftParenTok;
+                        return Token.mkDefaultToken(Token.leftParenTok, lineno, col);
                     case ')':
                         ch = nextChar();
-                        return Token.rightParenTok;
+                        return Token.mkDefaultToken(Token.rightParenTok, lineno, col);
                     case '{':
                         ch = nextChar();
-                        return Token.leftBraceTok;
+                        return Token.mkDefaultToken(Token.leftBraceTok, lineno, col);
                     case '}':
                         ch = nextChar();
-                        return Token.rightBraceTok;
+                        return Token.mkDefaultToken(Token.rightBraceTok, lineno, col);
 
                     // Left Bracket Token Add - 추가 구현
                     case '[':
                         ch = nextChar();
-                        return Token.leftBracketTok;
+                        return Token.mkDefaultToken(Token.leftBracketTok, lineno, col);
                     // Right Bracket Token Add - 추가 구현
                     case ']':
                         ch = nextChar();
-                        return Token.rightBracketTok;
+                        return Token.mkDefaultToken(Token.rightBracketTok, lineno, col);
 
+                    case ':':
+                        ch = nextChar();
+                        return Token.mkDefaultToken(Token.colonTok, lineno, col);
                     case ';':
                         ch = nextChar();
-                        return Token.semicolonTok;
+                        return Token.mkDefaultToken(Token.semicolonTok, lineno, col);
 
                     case ',':
                         ch = nextChar();
-                        return Token.commaTok;
+                        return Token.mkDefaultToken(Token.commaTok, lineno, col);
 
                     case '&':
                         check('&');
-                        return Token.andTok;
+                        return Token.mkDefaultToken(Token.andTok, lineno, col);
                     case '|':
                         check('|');
-                        return Token.orTok;
+                        return Token.mkDefaultToken(Token.orTok, lineno, col);
                     case '=':
-                        return chkOpt('=', Token.assignTok,
-                                Token.eqeqTok);
+                        return chkOpt('=', Token.mkDefaultToken(Token.assignTok, lineno, col),
+                                Token.mkDefaultToken(Token.eqeqTok, lineno, col));
 
                     case '<':
-                        return chkOpt('=', Token.ltTok,
-                                Token.lteqTok);
+                        return chkOpt('=', Token.mkDefaultToken(Token.ltTok, lineno, col),
+                                Token.mkDefaultToken(Token.lteqTok, lineno, col));
                     case '>':
-                        return chkOpt('=', Token.gtTok,
-                                Token.gteqTok);
+                        return chkOpt('=', Token.mkDefaultToken(Token.gtTok, lineno, col),
+                                Token.mkDefaultToken(Token.gteqTok, lineno, col));
                     case '!':
-                        return chkOpt('=', Token.notTok, Token.noteqTok);
+                        return chkOpt('=', Token.mkDefaultToken(Token.notTok, lineno, col),
+                                Token.mkDefaultToken(Token.noteqTok, lineno, col));
 
                     default:
                         error("Illegal character " + ch);

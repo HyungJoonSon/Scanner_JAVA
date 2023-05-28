@@ -54,6 +54,7 @@ public class Token {
     public static final Token caseTok = new Token(TokenType.Case, "0");
     public static final Token breakTok = new Token(TokenType.Break, "0");
     public static final Token DefaultTok = new Token(TokenType.Default, "0");
+    public static final Token colonTok = new Token(TokenType.Colon, "0");
 
     private TokenType type;
     private String value = "";
@@ -91,7 +92,7 @@ public class Token {
             return mkIdentTok(name, lineNum, columnNum);
         for (int i = 0; i < KEYWORDS; i++)
             if (name.equals(reserved[i]))
-                return token[i];
+                return mkDefaultToken(token[i], lineNum, columnNum);
         return mkIdentTok(name, lineNum, columnNum);
     } // keyword
 
@@ -113,6 +114,10 @@ public class Token {
 
     public static Token mkDoubleLiteral(String name, int lineNum, int columnNum) {
         return new Token(TokenType.Double, name, lineNum, columnNum);
+    }
+
+    public static Token mkDefaultToken(Token token, int lineNum, int columnNum) {
+        return new Token(token.type, token.value, lineNum, columnNum);
     }
 
     public String toString(String fileName) {
