@@ -2,6 +2,7 @@ import java.io.*;
 
 public class Scanner {
 
+    private boolean isError = false;
     private boolean isEof = false;
     private char ch = ' ';
     private BufferedReader input;
@@ -51,10 +52,10 @@ public class Scanner {
         do {
             if (isLetter(ch) || ch == '_') { // ident or keyword
                 String spelling = concat(letters + digits + '_');
-                return Token.keyword(spelling);
+                return Token.keyword(spelling, lineno, col);
             } else if (isDigit(ch)) { // int literal
                 String number = concat(digits);
-                return Token.mkIntLiteral(number);
+                return Token.mkIntLiteral(number, lineno, col);
             } else
                 switch (ch) {
                     case ' ':
@@ -93,13 +94,12 @@ public class Scanner {
                         }
 
                         break;
-                    /*
-                     * case '\'': // char literal
-                     * char ch1 = nextChar();
-                     * nextChar(); // get '
-                     * ch = nextChar();
-                     * return Token.mkCharLiteral("" + ch1);
-                     */
+                    case '\'': // char literal
+                        char ch1 = nextChar();
+                        nextChar(); // get '
+                        ch = nextChar();
+                        return Token.mkCharLiteral("" + ch1, lineno, col);
+
                     case eofCh:
                         return Token.eofTok;
 
@@ -124,7 +124,6 @@ public class Scanner {
                             return Token.decrementTok;
                         }
                         return Token.minusTok;
-
                     case '*':
                         ch = nextChar();
                         if (ch == '=') { // multAssign
@@ -132,7 +131,6 @@ public class Scanner {
                             return Token.multAssignTok;
                         }
                         return Token.multiplyTok;
-
                     case '%':
                         ch = nextChar();
                         if (ch == '=') { // remAssign
@@ -140,19 +138,15 @@ public class Scanner {
                             return Token.remAssignTok;
                         }
                         return Token.reminderTok;
-
                     case '(':
                         ch = nextChar();
                         return Token.leftParenTok;
-
                     case ')':
                         ch = nextChar();
                         return Token.rightParenTok;
-
                     case '{':
                         ch = nextChar();
                         return Token.leftBraceTok;
-
                     case '}':
                         ch = nextChar();
                         return Token.rightBraceTok;
@@ -180,7 +174,6 @@ public class Scanner {
                     case '|':
                         check('|');
                         return Token.orTok;
-
                     case '=':
                         return chkOpt('=', Token.assignTok,
                                 Token.eqeqTok);
@@ -192,8 +185,7 @@ public class Scanner {
                         return chkOpt('=', Token.gtTok,
                                 Token.gteqTok);
                     case '!':
-                        return chkOpt('=', Token.notTok,
-                                Token.noteqTok);
+                        return chkOpt('=', Token.notTok, Token.noteqTok);
 
                     default:
                         error("Illegal character " + ch);
@@ -234,16 +226,24 @@ public class Scanner {
     }
 
     public void error(String msg) {
-        System.err.print(line);
-        System.err.println("Error: column " + col + " " + msg);
-        System.exit(1);
+        isError = true;
+        System.err.println("Error: Line - " + lineno + ", column - " + col + ", msg: " + msg);
+    }
+
+    public boolean getError() {
+        boolean temp = isError;
+        isError = false;
+
+        return temp;
     }
 
     static public void main(String[] argv) {
         Scanner lexer = new Scanner(argv[0]);
         Token tok = lexer.next();
         while (tok != Token.eofTok) {
-            System.out.println(tok.toString());
+            if (!lexer.getError()) {
+                System.out.println(tok.toString(argv[0]));
+            }
             tok = lexer.next();
         }
     } // main
