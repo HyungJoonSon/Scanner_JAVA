@@ -1,7 +1,7 @@
 /**
     Mtldldlkfaklsdjflksejlfladstkjasldfk
     *
-    test 
+    test  tlisjdl 
 */
 
 /// Mini C has two types of comments: text comment and line comment.
@@ -20,4 +20,12 @@ void main()
   c = 'd';
   str = "est__%%sdf\n\\ed";
   write(i);	// printf it
+
+  switch (c) {
+    case 'c':
+      write(c);
+      break;
+    default:
+      break;
+  }
 }

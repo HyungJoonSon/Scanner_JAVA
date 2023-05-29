@@ -1,7 +1,5 @@
 import java.io.*;
 
-import javax.xml.stream.events.Comment;
-
 public class Scanner {
 
     // Error 검사
@@ -99,15 +97,11 @@ public class Scanner {
                         // multi document comment 추가 구현
                         if (ch == '*') {
                             ch = nextChar();
-                            if (ch == '*') {
+                            if (ch == '*') { // Multi Document Comment의 경우 Value를 지정해줘야 함
                                 String comment = "";
                                 do {
                                     while (ch != '*') {
                                         ch = nextChar();
-                                        if (ch == ' ') {
-                                            continue;
-                                        }
-
                                         if (ch == eolnCh) {
                                             comment += '\n';
                                         } else {
@@ -236,6 +230,7 @@ public class Scanner {
                         ch = nextChar();
                         return Token.mkDefaultToken(Token.rightBracketTok, lineno, col);
 
+                    // Colon Token Add - 추가 구현
                     case ':':
                         ch = nextChar();
                         return Token.mkDefaultToken(Token.colonTok, lineno, col);

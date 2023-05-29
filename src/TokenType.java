@@ -19,8 +19,6 @@ public enum TokenType {
     RightBrace("}", 39), Colon(":", 50), CharLiteral("%c_lit", 51),
     StringLiteral("%s_lit", 52), DoubleLiteral("%d_lit", 53), Document("document", 54);
 
-    // Continue("continue", 50); String("string",42),
-
     private final String name;
     private final int number;
 

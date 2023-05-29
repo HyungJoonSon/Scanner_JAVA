@@ -71,6 +71,7 @@ public class Token {
         }
     }
 
+    // 추가
     private Token(TokenType t, String v, int lineNum, int columnNum) {
         type = t;
         value = v;
@@ -104,6 +105,8 @@ public class Token {
         return new Token(TokenType.IntLiteral, name, lineNum, columnNum);
     }
 
+    // Char, String, Double Literal 및 Document Token, 행과 열을 입력받고 Token을 반환하는 Default
+    // Method 추가
     public static Token mkCharLiteral(String name, int lineNum, int columnNum) {
         return new Token(TokenType.CharLiteral, name, lineNum, columnNum);
     }
@@ -116,12 +119,12 @@ public class Token {
         return new Token(TokenType.DoubleLiteral, name, lineNum, columnNum);
     }
 
-    public static Token mkDefaultToken(Token token, int lineNum, int columnNum) {
-        return new Token(token.type, token.value, lineNum, columnNum);
-    }
-
     public static Token mkDocumentToken(String name, int lineNum, int columnNum) {
         return new Token(TokenType.Document, name, lineNum, columnNum);
+    }
+
+    public static Token mkDefaultToken(Token token, int lineNum, int columnNum) {
+        return new Token(token.type, token.value, lineNum, columnNum);
     }
 
     public String toString(String fileName) {
