@@ -1,5 +1,7 @@
 import java.io.*;
 
+import javax.xml.stream.events.Comment;
+
 public class Scanner {
 
     // Error 검사
@@ -94,20 +96,56 @@ public class Scanner {
                             return Token.mkDefaultToken(Token.divideTok, lineno, col);
 
                         // multi line comment
+                        // multi document comment 추가 구현
                         if (ch == '*') {
-                            do {
-                                while (ch != '*')
-                                    ch = nextChar();
-                                ch = nextChar();
-                            } while (ch != '/');
                             ch = nextChar();
+                            if (ch == '*') {
+                                String comment = "";
+                                do {
+                                    while (ch != '*') {
+                                        ch = nextChar();
+                                        if (ch == ' ') {
+                                            continue;
+                                        }
+
+                                        if (ch == eolnCh) {
+                                            comment += '\n';
+                                        } else {
+                                            comment += ch;
+                                        }
+                                    }
+                                    ch = nextChar(); // get '*'
+                                    comment += (ch == eolnCh ? '\n' : "");
+                                } while (ch != '/');
+                                ch = nextChar(); // get '/'
+                                return Token.mkDocumentToken(comment.substring(0, comment.length() - 1), lineno, col);
+                            } else {
+                                do {
+                                    while (ch != '*')
+                                        ch = nextChar();
+                                    ch = nextChar();
+                                } while (ch != '/');
+                                ch = nextChar();
+                            }
                         }
                         // single line comment
+                        // single document comment 추가 구현
                         else if (ch == '/') {
-                            do {
-                                ch = nextChar();
-                            } while (ch != eolnCh);
                             ch = nextChar();
+                            if (ch == '/') {
+                                String comment = "";
+                                do {
+                                    ch = nextChar();
+                                    comment += ch;
+                                } while (ch != eolnCh);
+                                ch = nextChar();
+                                return Token.mkDocumentToken(comment, lineno, col);
+                            } else {
+                                do {
+                                    ch = nextChar();
+                                } while (ch != eolnCh);
+                                ch = nextChar();
+                            }
                         }
 
                         break;

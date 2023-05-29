@@ -120,14 +120,22 @@ public class Token {
         return new Token(token.type, token.value, lineNum, columnNum);
     }
 
+    public static Token mkDocumentToken(String name, int lineNum, int columnNum) {
+        return new Token(TokenType.Document, name, lineNum, columnNum);
+    }
+
     public String toString(String fileName) {
-        return "Token -----> \t" + type.getTokenName()
-                + " ( " + type.getTokenNumber() + ", "
-                + (value.equals("0") ? " " : value)
-                + ", " + fileName
-                + ", " + lineNum
-                + ", " + (columnNum - value.length() + 1)
-                + " )";
+        if (type.equals(TokenType.Document)) {
+            return "Documented Comments ------> \t" + value;
+        } else {
+            return "Token ------> \t" + type.getTokenName()
+                    + " ( " + type.getTokenNumber() + ", "
+                    + (value.equals("0") ? " " : value)
+                    + ", " + fileName
+                    + ", " + lineNum
+                    + ", " + (columnNum - value.length() + 1)
+                    + " )";
+        }
     } // toString
 
     public static void main(String[] args) {

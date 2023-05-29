@@ -1,6 +1,10 @@
-/*
-    Mini C has two types of comments: text comment and line comment.
+/**
+    Mtldldlkfaklsdjflksejlfladstkjasldfk
+    *
+    test 
 */
+
+/// Mini C has two types of comments: text comment and line comment.
 
 void main()
 { 
