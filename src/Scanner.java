@@ -2,6 +2,7 @@ import java.io.*;
 
 public class Scanner {
 
+    // Error 검사
     private boolean isError = false;
     private boolean isEof = false;
     private char ch = ' ';
@@ -26,8 +27,11 @@ public class Scanner {
     }
 
     private char nextChar() { // Return next char
-        if (ch == eofCh)
+        if (ch == eofCh) {
             error("Attempt to read past end of file");
+            System.exit(1);
+        }
+
         col++;
         if (col >= line.length()) {
             try {
@@ -53,9 +57,22 @@ public class Scanner {
             if (isLetter(ch) || ch == '_') { // ident or keyword
                 String spelling = concat(letters + digits + '_');
                 return Token.keyword(spelling, lineno, col);
-            } else if (isDigit(ch)) { // int literal
+                // 추가구현 - Short Form 인식 - .123 형태
+
+            } else if (ch == '.') {
                 String number = concat(digits);
-                return Token.mkIntLiteral(number, lineno, col);
+                return Token.mkDoubleLiteral(number, lineno, col);
+
+                // int literal
+                // 추가구현 - Double literal, Short Form 인식 - 123. 형태
+            } else if (isDigit(ch)) {
+                String number = concat(digits);
+                if (ch != '.') {
+                    return Token.mkIntLiteral(number, lineno, col);
+                }
+                number += concat(digits);
+                return Token.mkDoubleLiteral(number, lineno, col);
+
             } else
                 switch (ch) {
                     case ' ':
@@ -94,16 +111,35 @@ public class Scanner {
                         }
 
                         break;
+
+                    // Char Literial Token Add - 추가 구현
                     case '\'': // char literal
                         char ch1 = nextChar();
                         nextChar(); // get '
                         ch = nextChar();
                         return Token.mkCharLiteral("" + ch1, lineno, col);
 
+                    // String Literial Token Add - 추가 구현
+                    case '\"':
+                        String str = "";
+                        ch = nextChar();
+                        while (ch != '\"') { // 시작이 시퀸스이라면 시퀸스 처리 아니면 문자열 처리
+                            if (ch == '\\') { // 탈출 시퀸스일 경우
+                                str += ch;
+                                ch = nextChar(); // '\' 먼저 넣어주고
+                                str += ch;
+                                ch = nextChar(); // 시퀸스를 넣어준다.
+                            }
+                            str += concatStr(); // 문자열 인식(탈출 시퀸스나 '"' 정지)
+                        }
+                        ch = nextChar();
+                        return Token.mkStringLiteral(str, lineno, col);
+
                     // 마지막 토큰은 행, 열의 정보가 필요 없음
                     case eofCh:
                         return Token.eofTok;
 
+                    // Add, AddAssign, Increment
                     case '+':
                         ch = nextChar();
                         if (ch == '=') { // addAssign
@@ -115,6 +151,7 @@ public class Scanner {
                         }
                         return Token.mkDefaultToken(Token.plusTok, lineno, col);
 
+                    // Sub, SubAssign, Decrement
                     case '-':
                         ch = nextChar();
                         if (ch == '=') { // subAssign
@@ -196,6 +233,7 @@ public class Scanner {
                         error("Illegal character " + ch);
                 } // switch
         } while (true);
+
     } // next
 
     private boolean isLetter(char c) {
@@ -227,6 +265,15 @@ public class Scanner {
             r += ch;
             ch = nextChar();
         } while (set.indexOf(ch) >= 0);
+        return r;
+    }
+
+    private String concatStr() {
+        String r = "";
+        do {
+            r += ch;
+            ch = nextChar();
+        } while (ch != '\"' && ch != '\\');
         return r;
     }
 

@@ -113,7 +113,7 @@ public class Token {
     }
 
     public static Token mkDoubleLiteral(String name, int lineNum, int columnNum) {
-        return new Token(TokenType.Double, name, lineNum, columnNum);
+        return new Token(TokenType.DoubleLiteral, name, lineNum, columnNum);
     }
 
     public static Token mkDefaultToken(Token token, int lineNum, int columnNum) {
